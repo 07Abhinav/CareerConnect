@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload {
+            background-color: #0070f3;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .file-upload:hover {
+            background-color: #005bb5;
+        }
+
+        .submit-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Your Resume</h1>
+        <form id="uploadForm">
+            <label for="resume" class="file-upload">Choose File</label>
+            <input type="file" id="resume" name="resume" accept=".pdf,.docx" required>
+            <p class="message" id="fileName">No file chosen</p>
+            <button type="submit" class="submit-button">Upload</button>
+        </form>
+        <p class="message" id="status"></p>
+    </div>
+
+    <script>
+        // Display the selected file name
+        document.getElementById('resume').addEventListener('change', function (e) {
+            const fileName = e.target.files[0].name;
+            document.getElementById('fileName').textContent = fileName;
+        });
+
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('resume');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('resume', file);
+
+            const status = document.getElementById('status');
+            status.textContent = 'Uploading...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/resume/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                const result = await response.json();
+                status.textContent = 'Upload successful!';
+                console.log(result);
+            } catch (error) {
+                status.textContent = 'Upload failed. Please try again.';
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
