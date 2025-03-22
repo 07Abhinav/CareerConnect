@@ -10,6 +10,7 @@ const fs = require('fs');
 const authRoutes = require('./routes/auth');
 const resumeRoutes = require('./routes/resume');
 const jobRoutes = require('./routes/jobs');
+const userRoutes = require('./routes/user');
 
 // Load environment variables
 dotenv.config();  // Load environment variables from .env file
@@ -46,11 +47,19 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use('/api/auth', authRoutes);       // Authentication routes
 app.use('/api/resume', resumeRoutes);   // Resume upload routes
 app.use('/api/jobs', jobRoutes);        // Job recommendation routes
+app.use('/api/users', userRoutes);       // User profile routes
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB database'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+    bufferCommands: false,
+  })
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+  });
 // Export the app for use in server.js
 module.exports = app;

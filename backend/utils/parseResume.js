@@ -20,16 +20,16 @@ const extractTextFromFile = async (filePath) => {
         const fileBuffer = fs.readFileSync(filePath);
         const fileType = filePath.split('.').pop().toLowerCase();
 
-        console.log('File type:', fileType); // Log the file type
-        console.log('File buffer:', fileBuffer); // Log the file buffer
+        // console.log('File type:', fileType); // Log the file type
+        // console.log('File buffer:', fileBuffer); // Log the file buffer
 
         if (fileType === 'pdf') {
             const data = await pdf(fileBuffer);
-            console.log('Extracted PDF text:', data.text); // Log extracted PDF text
+            // console.log('Extracted PDF text:', data.text); // Log extracted PDF text
             return data.text;
         } else if (fileType === 'docx') {
             const result = await mammoth.extractRawText({ buffer: fileBuffer });
-            console.log('Extracted DOCX text:', result.value); // Log extracted DOCX text
+            // console.log('Extracted DOCX text:', result.value); // Log extracted DOCX text
             return result.value;
         } else {
             throw new Error('Unsupported file type');
@@ -47,14 +47,14 @@ const extractTextFromFile = async (filePath) => {
 const extractSkills = (resumeText) => {
     const skills = new Set();
 
-    console.log('Resume text for skills extraction:', resumeText); // Log the resume text
+    // console.log('Resume text for skills extraction:', resumeText); // Log the resume text
     // Match skills from the skills list
     skillsList.forEach(skill => {
         if (resumeText.toLowerCase().includes(skill.toLowerCase())) {
             skills.add(skill);
         }
     });
-    console.log('Matched skills:', Array.from(skills));
+    // console.log('Matched skills:', Array.from(skills));
     return Array.from(skills);
 };
 
@@ -67,7 +67,7 @@ const parseResume = async (filePath) => {
     try {
         // Extract text from the file
         const resumeText = await extractTextFromFile(filePath);
-        console.log('Resume text:', resumeText); // Log the extracted text
+        // console.log('Resume text:', resumeText); // Log the extracted text
 
         // Extract skills from the text
         const skills = extractSkills(resumeText);

@@ -1,8 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const { recommendJobs } = require('../controllers/jobController');
+const express = require("express");
+const authenticate = require("../middleware/authenticate");
+const { recommendJobs, getRecommendedJobs } = require("../controllers/jobController");
 
-// POST route to recommend jobs
-router.post('/recommend', recommendJobs);
+const router = express.Router();
+
+// POST: Generate and recommend jobs
+router.post("/recommend", authenticate, recommendJobs);
+
+// GET: Fetch recommended jobs from MongoDB
+router.get("/recommended", authenticate, getRecommendedJobs);
 
 module.exports = router;
