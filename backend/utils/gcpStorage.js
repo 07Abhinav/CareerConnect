@@ -9,7 +9,8 @@ if (!process.env.GCP_KEY_JSON) {
 }
 // console.log("GCP_KEY_JSON:", process.env.GCP_KEY_JSON);
 // 📂 Define a temporary path for the key file
-const tempKeyFilePath = "/a.json";
+const tempKeyFilePath = path.join(__dirname, "a.json");
+
 
 // ✨ Write the JSON content from GCP_KEY_JSON to the temporary file
 fs.writeFileSync(tempKeyFilePath, process.env.GCP_KEY_JSON);
