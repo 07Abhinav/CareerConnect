@@ -8,3 +8,6 @@ backend\carrerconnect-e3cfc92c4618.json
 uploads
 E:\AssignmentCarrer\CareerConnect\backend\carrerconnect-e3cfc92c4618.json
 backend\carrerconnect-e3cfc92c4618.json
+# Ignore GCP key JSON
+backend/utils/a.json
+utils/a.json

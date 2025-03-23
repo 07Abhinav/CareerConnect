@@ -1,3 +1,5 @@
 node_modules
 E:\AssignmentCarrer\CareerConnect\backend\carrerconnect-e3cfc92c4618.json
 carrerconnect-e3cfc92c4618.json
+# Ignore GCP key JSON
+backend/utils/a.json
