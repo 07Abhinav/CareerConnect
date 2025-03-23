@@ -7,9 +7,9 @@ require("dotenv").config(); // Load environment variables from .env file
 if (!process.env.GCP_KEY_JSON) {
   throw new Error("❌ GCP_KEY_JSON environment variable is not set.");
 }
-
+// console.log("GCP_KEY_JSON:", process.env.GCP_KEY_JSON);
 // 📂 Define a temporary path for the key file
-const tempKeyFilePath = "/app/carrerconnect-key.json";
+const tempKeyFilePath = "/carrerconnect-key.json";
 
 // ✨ Write the JSON content from GCP_KEY_JSON to the temporary file
 fs.writeFileSync(tempKeyFilePath, process.env.GCP_KEY_JSON);
