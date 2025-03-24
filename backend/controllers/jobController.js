@@ -11,8 +11,12 @@ const recommendJobs = async (req, res) => {
     const { skills } = req.body; // Extracted skills from the resume
     const userId = req.userId;
 
+    console.log('User ID:', userId);
+    console.log('Skills:', skills);
+
     // Fetch job listings from JSearch API
     const jobListings = await fetchJobsFromJSearch(skills);
+    console.log('Job Listings:', jobListings);
 
     // Match jobs based on extracted skills
     const recommendedJobs = jobListings
@@ -30,14 +34,16 @@ const recommendJobs = async (req, res) => {
       .filter((job) => job.similarityScore > 0) // Filter out jobs with no matching skills
       .sort((a, b) => b.similarityScore - a.similarityScore); // Sort by similarity score
 
-    // Save recommended jobs and skills to MongoDB
-    const jobData = new Job({
-      userId,
-      skills,
-      recommendedJobs,
-    });
+    console.log('Recommended Jobs:', recommendedJobs);
 
-    await jobData.save();
+    // Save or update recommended jobs and skills to MongoDB
+    const jobData = await Job.findOneAndUpdate(
+      { userId },
+      { skills, recommendedJobs },
+      { upsert: true, new: true }
+    );
+
+    console.log('Job data saved/updated successfully:', jobData);
 
     res.status(200).json({
       success: true,
@@ -55,27 +61,48 @@ const recommendJobs = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const getRecommendedJobs = async (req, res) => {
-    try {
-      const userId = req.userId; // Extract userId from authenticated request
-  
-      // Find the recommended jobs for the authenticated user
-      const jobData = await Job.findOne({ userId });
-  
-      if (!jobData || !jobData.recommendedJobs || jobData.recommendedJobs.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No recommended jobs found. Please upload a resume and generate recommendations.",
-        });
-      }
-  
-      res.status(200).json({
-        success: true,
-        recommendedJobs: jobData.recommendedJobs,
+  try {
+    const userId = req.userId; // Extract userId from authenticated request
+
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is missing. Please authenticate and try again.",
       });
-    } catch (error) {
-      console.error("❌ Error fetching recommended jobs:", error);
-      res.status(500).json({ success: false, message: "Error fetching recommended jobs" });
     }
-  };
+
+    // Find the recommended jobs for the authenticated user
+    const jobData = await Job.findOne({ userId });
+
+    // Check if jobData exists and has recommendedJobs
+    if (!jobData) {
+      return res.status(404).json({
+        success: false,
+        message: "No job data found for this user. Please generate recommendations first.",
+      });
+    }
+
+    if (!jobData.recommendedJobs || jobData.recommendedJobs.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No recommended jobs found. Please upload a resume and generate recommendations.",
+      });
+    }
+
+    // Return the recommended jobs
+    res.status(200).json({
+      success: true,
+      recommendedJobs: jobData.recommendedJobs,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching recommended jobs:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching recommended jobs.",
+      error: error.message, // Include the error message for debugging
+    });
+  }
+};
   
 module.exports = { recommendJobs, getRecommendedJobs };
