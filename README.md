@@ -155,7 +155,7 @@ It will give the response of recommended job according to your skills
 Frontend Deployed On Web
 
 ```bash
-http://34.58.71.192:3000/login
+http://35.209.28.198:3000/login
 ```
 
 Frontend Setup
